@@ -15,23 +15,23 @@ def main(file):
     captions, tp, fp, fn = get_metrics(nlp, file)
 
     for c in captions:
-        print('Full Address: {address:100s}'.format(address=c["full address"]))
+        print('Full Address: {address}'.format(address=c["full address"]))
         print(
-            'Coordinates: ({coords[0]:.2f},{coords[1]:.2f}), Distance: {distance:.2f}'.format(
+            'Coordinates: ({coords[0]:.2f},{coords[1]:.2f}), Distance: {distance:.2f}km'.format(
                 coords=c["coordinates"], distance=c["distance"]
             )
         )
-        print()
+        # print()
 
     precision = tp / (tp + fp)
     recall = tp / (tp + fp + fn)
     f1 = 2 * precision * recall / (precision + recall)
 
     print('TP: {}, FP: {}, FN: {}'.format(tp, fp, fn))
-    print('Precision = {:.2f}'.format(precision))
-    print('Recall = {:.2f}'.format(recall))
+    print('Precision = {:.2f}%'.format(precision*100))
+    print('Recall = {:.2f}%'.format(recall*100))
 
-    print('F1 = {:.2f}'.format(f1))
+    print('F1 = {:.2f}%'.format(f1*100))
 
 
 def get_metrics(nlp, file):
@@ -45,8 +45,8 @@ def get_metrics(nlp, file):
             caption = p['caption']
             feature = get_geographical_feature(nlp(caption))
             ground_truth_toponym = p['ground truth toponym']
-            if feature:
-                location = geocode(feature)
+            location = geocode(feature)
+            if location:
                 guide_coords = (
                     round(float(p["guide-latitude-WGS84"]), 2),
                     round(float(p["guide-longitude-WGS84"]), 2)
@@ -56,12 +56,13 @@ def get_metrics(nlp, file):
                     round(location.longitude, 2)
                 )
                 distance = geodesic(guide_coords, retrieved_coords).km
-                if feature == ground_truth_toponym:
+                if distance <= 20:
                     tp += 1
                 else:
                     fp += 1
             else:
                 fn += 1
+
             captions.append({
                 "full address": location.address.strip(),
                 "coordinates": (location.latitude, location.longitude),
