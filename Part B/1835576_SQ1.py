@@ -5,28 +5,20 @@ import argparse
 
 def main(file):
     nlp = spacy.load("en_core_web_sm")
-    with open(file) as json_file:
-        data = json.load(json_file)
-        tp, fp, fn = 0, 0, 0
-        for p in data:
-            caption = p['caption']
-            feature = get_geographical_feature(nlp(p['caption']))
-            toponym = p['ground truth toponym']
-            if feature:
-                if feature == toponym:
-                    tp += 1
-                else:
-                    fp += 1
-            else:
-                fn += 1
-            print('Caption: {}, Toponym: {}'.format(caption, feature))
-        print('TP: {}, FP: {}, FN: {}'.format(tp, fp, fn))
-        precision = tp / (tp + fp)
-        print('Precision = {:.2f}'.format(precision))
-        recall = tp / (tp + fp + fn)
-        print('Recall = {:.2f}'.format(recall))
 
-        print('F1 = {:.2f}'.format(2 * precision * recall / (precision + recall)))
+    captions, tp, fp, fn = get_metrics(nlp, file)
+
+    for c in captions:
+        print('Caption: {}, Toponym: {}'.format(c["caption"], c["feature"]))
+
+    precision = tp / (tp + fp)
+    recall = tp / (tp + fp + fn)
+    f1 = 2 * precision * recall / (precision + recall)
+
+    print('TP: {}, FP: {}, FN: {}'.format(tp, fp, fn))
+    print('Precision = {:.2f}'.format(precision))
+    print('Recall = {:.2f}'.format(recall))
+    print('F1 = {:.2f}'.format(f1))
 
 
 def get_metrics(nlp, file):
@@ -46,7 +38,7 @@ def get_metrics(nlp, file):
             else:
                 fn += 1
 
-            captions.append({"caption": caption, "feature": feature})
+            captions.append({"caption": caption.strip(), "feature": feature})
 
     return captions, tp, fp, fn
 
