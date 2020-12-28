@@ -35,19 +35,30 @@ def get_metrics(nlp, file):
         tp, fp, fn = 0, 0, 0
         for p in data:
             caption = p['caption']
-            feature = get_geographical_feature(nlp(p['caption']))
-            toponym = p['ground truth toponym']
+            feature = get_geographical_feature(nlp(caption))
+            ground_truth_toponym = p['ground truth toponym']
             if feature:
                 location = geocode(feature)
-                print(location)
-                if feature == toponym:
+                guide_coords = (
+                    p["guide-latitude-WGS84"],
+                    p["guide-longitude-WGS84"]
+                )
+                retrieved_coords = (
+                    location.latitude,
+                    location.longitude
+                )
+                # print(guide_coords, retrieved_coords)
+                if feature == ground_truth_toponym:
                     tp += 1
                 else:
                     fp += 1
             else:
                 fn += 1
 
-            captions.append({"caption": caption.strip(), "feature": feature})
+            captions.append({
+                "full address": location.address.strip(),
+                "coordinates": (location.latitude, location.longitude),
+                "distance": get_distance(retrieved_coords, guide_coords)})
 
     return captions, tp, fp, fn
 
@@ -89,6 +100,12 @@ def get_new_model():
             for text, annotations in train_data:
                 nlp.update([text], [annotations], drop=0.5, sgd=optimizer)
     return nlp
+
+
+def get_distance(retrieved_coords, guide_coords):
+    r = 6730.0
+    print(retrieved_coords, guide_coords)
+    return None
 
 
 if __name__ == '__main__':
