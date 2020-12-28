@@ -5,7 +5,6 @@ import argparse
 from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
 from functools import partial
-import math
 
 
 def main(file):
@@ -21,7 +20,6 @@ def main(file):
                 coords=c["coordinates"], distance=c["distance"]
             )
         )
-        # print()
 
     precision = tp / (tp + fp)
     recall = tp / (tp + fp + fn)
@@ -44,7 +42,6 @@ def get_metrics(nlp, file):
         for p in data:
             caption = p['caption']
             feature = get_geographical_feature(nlp(caption))
-            ground_truth_toponym = p['ground truth toponym']
             location = geocode(feature)
             if location:
                 guide_coords = (
@@ -108,15 +105,6 @@ def get_new_model():
             for text, annotations in train_data:
                 nlp.update([text], [annotations], drop=0.5, sgd=optimizer)
     return nlp
-
-
-def get_distance(a, b):
-    r = 6730.0
-    r_lat, r_lon = math.radians(a[0]), math.radians(a[1])
-    g_lat, g_lon = math.radians(b[0]), math.radians(b[1])
-
-    # longitude_distance =
-    return None
 
 
 if __name__ == '__main__':
