@@ -16,13 +16,15 @@ def main(file):
     for c in captions:
         print('Caption: {}, Toponym: {}'.format(c["caption"], c["feature"]))
 
-    print('TP: {}, FP: {}, FN: {}'.format(tp, fp, fn))
     precision = tp / (tp + fp)
-    print('Precision = {:.2f}'.format(precision))
     recall = tp / (tp + fp + fn)
+    f1 = 2 * precision * recall / (precision + recall)
+
+    print('TP: {}, FP: {}, FN: {}'.format(tp, fp, fn))
+    print('Precision = {:.2f}'.format(precision))
     print('Recall = {:.2f}'.format(recall))
 
-    print('F1 = {:.2f}'.format(2 * precision * recall / (precision + recall)))
+    print('F1 = {:.2f}'.format(f1))
 
 
 def get_metrics(nlp, file):
