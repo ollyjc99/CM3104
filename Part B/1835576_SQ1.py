@@ -1,10 +1,11 @@
 import spacy
 import json
+import argparse
 
 
-def main():
+def main(file):
     nlp = spacy.load("en_core_web_sm")
-    with open('json-capLatLong.json') as json_file:
+    with open(file) as json_file:
         data = json.load(json_file)
         tp, fp, fn = 0, 0, 0
         for p in data:
@@ -34,5 +35,8 @@ def get_geographical_feature(doc):
             return ent.text.strip()
 
 
-if __name__ == '__main__':
-    main()
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Arguments')
+    parser.add_argument('json_file', type=str, help='Path for JSON file')
+    args = parser.parse_args()
+    main(args.json_file)
