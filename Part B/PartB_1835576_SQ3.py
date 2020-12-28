@@ -3,7 +3,9 @@ import json
 import random
 import argparse
 from geopy.geocoders import Nominatim
+from geopy.distance import geodesic
 from functools import partial
+import math
 
 
 def main(file):
@@ -13,7 +15,13 @@ def main(file):
     captions, tp, fp, fn = get_metrics(nlp, file)
 
     for c in captions:
-        print('Caption: {}, Toponym: {}'.format(c["caption"], c["feature"]))
+        print('Full Address: {address:100s}'.format(address=c["full address"]))
+        print(
+            'Coordinates: ({coords[0]:.2f},{coords[1]:.2f}), Distance: {distance:.2f}'.format(
+                coords=c["coordinates"], distance=c["distance"]
+            )
+        )
+        print()
 
     precision = tp / (tp + fp)
     recall = tp / (tp + fp + fn)
@@ -40,25 +48,24 @@ def get_metrics(nlp, file):
             if feature:
                 location = geocode(feature)
                 guide_coords = (
-                    p["guide-latitude-WGS84"],
-                    p["guide-longitude-WGS84"]
+                    round(float(p["guide-latitude-WGS84"]), 2),
+                    round(float(p["guide-longitude-WGS84"]), 2)
                 )
                 retrieved_coords = (
-                    location.latitude,
-                    location.longitude
+                    round(location.latitude, 2),
+                    round(location.longitude, 2)
                 )
-                # print(guide_coords, retrieved_coords)
+                distance = geodesic(guide_coords, retrieved_coords).km
                 if feature == ground_truth_toponym:
                     tp += 1
                 else:
                     fp += 1
             else:
                 fn += 1
-
             captions.append({
                 "full address": location.address.strip(),
                 "coordinates": (location.latitude, location.longitude),
-                "distance": get_distance(retrieved_coords, guide_coords)})
+                "distance": distance})
 
     return captions, tp, fp, fn
 
@@ -102,9 +109,12 @@ def get_new_model():
     return nlp
 
 
-def get_distance(retrieved_coords, guide_coords):
+def get_distance(a, b):
     r = 6730.0
-    print(retrieved_coords, guide_coords)
+    r_lat, r_lon = math.radians(a[0]), math.radians(a[1])
+    g_lat, g_lon = math.radians(b[0]), math.radians(b[1])
+
+    # longitude_distance =
     return None
 
 
