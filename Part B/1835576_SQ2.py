@@ -11,6 +11,22 @@ def main(file):
 
     nlp = get_new_model()
 
+    captions, tp, fp, fn = get_metrics(nlp, file)
+
+    for c in captions:
+        print('Caption: {}, Toponym: {}'.format(c["caption"], c["feature"]))
+
+    print('TP: {}, FP: {}, FN: {}'.format(tp, fp, fn))
+    precision = tp / (tp + fp)
+    print('Precision = {:.2f}'.format(precision))
+    recall = tp / (tp + fp + fn)
+    print('Recall = {:.2f}'.format(recall))
+
+    print('F1 = {:.2f}'.format(2 * precision * recall / (precision + recall)))
+
+
+def get_metrics(nlp, file):
+    captions = []
     with open(file) as json_file:
         data = json.load(json_file)
         tp, fp, fn = 0, 0, 0
@@ -25,15 +41,10 @@ def main(file):
                     fp += 1
             else:
                 fn += 1
-            print('Caption: {}, Geographical feature: {}'.format(caption, feature))
 
-        print('TP: {}, FP: {}, FN: {}'.format(tp, fp, fn))
-        precision = tp / (tp + fp)
-        print('Precision = {:.2f}'.format(precision))
-        recall = tp / (tp + fp + fn)
-        print('Recall = {:.2f}'.format(recall))
+            captions.append({"caption": caption.strip(), "feature": feature})
 
-        print('F1 = {:.2f}'.format(2 * precision * recall / (precision + recall)))
+    return captions, tp, fp, fn
 
 
 def get_geographical_feature(doc):
