@@ -18,12 +18,12 @@ def main():
                     fp += 1
             else:
                 fn += 1
-            print('Caption: {}, Geographical feature: {}'.format(caption, feature))
-
+            print('Caption: {}, Toponym: {}'.format(caption, feature))
+        print('TP: {}, FP: {}, FN: {}'.format(tp, fp, fn))
         precision = tp / (tp + fp)
-        print('Precision = {}'.format(precision))
+        print('Precision = {:.2f}'.format(precision))
         recall = tp / (tp + fp + fn)
-        print('Recall = {}'.format(recall))
+        print('Recall = {:.2f}'.format(recall))
 
         print('F1 = {:.2f}'.format(2 * precision * recall / (precision + recall)))
 
