@@ -49,8 +49,8 @@ def get_geographical_feature(doc):
             return ent.text.strip()
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Arguments')
-    parser.add_argument('json_file', type=str, help='Path for JSON file')
-    args = parser.parse_args()
-    main(args.json_file)
+if __name__ == '__main__':
+    if sys.argv:
+        main(sys.argv[1])
+    else:
+        main('json-capLatLong.json')
