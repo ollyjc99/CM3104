@@ -26,10 +26,10 @@ def main(file):
     f1 = 2 * precision * recall / (precision + recall)
 
     print('TP: {}, FP: {}, FN: {}'.format(tp, fp, fn))
-    print('Precision = {:.2f}%'.format(precision*100))
-    print('Recall = {:.2f}%'.format(recall*100))
+    print('Precision = {:.2f}'.format(precision))
+    print('Recall = {:.2f}'.format(recall))
 
-    print('F1 = {:.2f}%'.format(f1*100))
+    print('F1 = {:.2f}'.format(f1))
 
 
 def get_metrics(nlp, file):
