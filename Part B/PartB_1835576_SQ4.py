@@ -15,7 +15,7 @@ def main(file):
     for c in captions:
         print('Full Address: {address}'.format(address=c["full address"]))
         print(
-            'Coordinates: ({coords[0]:.2f},{coords[1]:.2f}), Distance: {distance:.2f}km'.format(
+            'Coordinates: ({coords[0]:.2f},{coords[1]:.2f}), Distance: {distance:.2f}'.format(
                 coords=c["coordinates"], distance=c["distance"]
             )
         )
@@ -31,6 +31,27 @@ def main(file):
     print('F1 = {:.2f}'.format(f1))
 
 
+def get_nearest_location(guide_coords, locations):
+    best = None
+    distance = 0
+
+    for location in locations:
+        retrieved_coords = (
+            round(location.latitude, 2),
+            round(location.longitude, 2)
+        )
+        if not best:
+            best = location
+            distance = geodesic(guide_coords, retrieved_coords).km
+        else:
+            potential_distance = geodesic(guide_coords, retrieved_coords).km
+            if potential_distance <= distance:
+                best = location
+                distance = potential_distance
+
+    return best, distance
+
+
 def get_metrics(nlp, file):
     captions = []
     geolocator = Nominatim(user_agent="coursework-ner-geocoder")
@@ -40,17 +61,14 @@ def get_metrics(nlp, file):
         for p in data:
             caption = p['caption']
             feature = get_geographical_feature(nlp(caption))
-            location = geolocator.geocode(feature, language="en")
-            if location:
+            locations = geolocator.geocode(feature, language="en", limit=18, exactly_one=False)
+            if locations:
                 guide_coords = (
                     round(float(p["guide-latitude-WGS84"]), 2),
                     round(float(p["guide-longitude-WGS84"]), 2)
                 )
-                retrieved_coords = (
-                    round(location.latitude, 2),
-                    round(location.longitude, 2)
-                )
-                distance = geodesic(guide_coords, retrieved_coords).km
+                location, distance = get_nearest_location(guide_coords, locations)
+
                 if distance <= 20:
                     tp += 1
                 else:
@@ -106,7 +124,7 @@ def get_new_model():
 
 
 if __name__ == '__main__':
-    if sys.argv:
+    if len(sys.argv) > 1:
         main(sys.argv[1])
     else:
         main('json-capLatLong.json')
