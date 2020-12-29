@@ -4,7 +4,6 @@ import json
 import random
 from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
-from functools import partial
 
 
 def main(file):
@@ -35,14 +34,13 @@ def main(file):
 def get_metrics(nlp, file):
     captions = []
     geolocator = Nominatim(user_agent="coursework-ner-geocoder")
-    geocode = partial(geolocator.geocode, language="en", limit=1)
     with open(file) as json_file:
         data = json.load(json_file)
         tp, fp, fn = 0, 0, 0
         for p in data:
             caption = p['caption']
             feature = get_geographical_feature(nlp(caption))
-            location = geocode(feature)
+            location = geolocator.geocode(feature, language="en", limit=1)
             if location:
                 guide_coords = (
                     round(float(p["guide-latitude-WGS84"]), 2),
