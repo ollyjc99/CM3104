@@ -1,7 +1,7 @@
+import sys
 import spacy
 import json
 import random
-import argparse
 
 
 def main(file):
@@ -89,7 +89,7 @@ def get_new_model():
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Arguments')
-    parser.add_argument('json_file', type=str, help='Path for JSON file')
-    args = parser.parse_args()
-    main(args.json_file)
+    if sys.argv:
+        main(sys.argv[1])
+    else:
+        main('json-capLatLong.json')

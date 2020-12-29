@@ -1,6 +1,6 @@
+import sys
 import spacy
 import json
-import argparse
 
 
 def main(file):
