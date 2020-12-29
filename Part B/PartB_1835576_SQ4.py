@@ -4,10 +4,12 @@ import json
 import random
 from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
+import csv
 
 
 def main(file):
-
+    # Value for printing coordinates to a csv file
+    csv_print = False
     nlp = get_new_model()
 
     captions, tp, fp, fn = get_metrics(nlp, file)
@@ -29,6 +31,15 @@ def main(file):
     print('Recall = {:.2f}'.format(recall))
 
     print('F1 = {:.2f}'.format(f1))
+
+    if csv_print:
+        with open('coordinates.csv', mode='w') as coords_file:
+            csv_writer = csv.writer(coords_file, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+            count = 0
+            csv_writer.writerow(['caption', 'latitude', 'longitude'])
+            for c in captions:
+                count += 1
+                csv_writer.writerow([c['caption'], c["coordinates"][0], c['coordinates'][1]])
 
 
 def get_nearest_location(guide_coords, locations):
@@ -77,6 +88,7 @@ def get_metrics(nlp, file):
                 fn += 1
 
             captions.append({
+                "caption": p["caption"],
                 "full address": location.address.strip(),
                 "coordinates": (location.latitude, location.longitude),
                 "distance": distance})
