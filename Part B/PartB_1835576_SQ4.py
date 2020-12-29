@@ -15,7 +15,7 @@ def main(file):
     for c in captions:
         print('Full Address: {address}'.format(address=c["full address"]))
         print(
-            'Coordinates: ({coords[0]:.2f},{coords[1]:.2f}), Distance: {distance:.2f}'.format(
+            'Coordinates: ({coords[0]:.2f}, {coords[1]:.2f}), Distance: {distance:.2f} km'.format(
                 coords=c["coordinates"], distance=c["distance"]
             )
         )
