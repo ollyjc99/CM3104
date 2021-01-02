@@ -49,7 +49,7 @@ def write_json(json_dict):
     for person in json_dict.keys():
         for timestamp in json_dict[person].keys():
             with open("data/data.json", "a") as json_file:
-                json.dump(dict[person][timestamp], json_file, indent=2)
+                json.dump(json_dict[person][timestamp], json_file, indent=2)
 
 
 if __name__ == "__main__":
