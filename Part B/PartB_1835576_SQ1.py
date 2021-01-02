@@ -50,7 +50,7 @@ def get_geographical_feature(doc):
 
 
 if __name__ == '__main__':
-    if sys.argv:
+    if len(sys.argv) > 1:
         main(sys.argv[1])
     else:
         main('json-capLatLong.json')
