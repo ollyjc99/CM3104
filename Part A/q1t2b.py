@@ -12,34 +12,17 @@ pipeline = [
             'datetime': 1,
             'p_1_calories': '$person_1_fitbit.calories',
             'p_2_calories': '$person_2_fitbit.calories',
-            'day': {
-                '$toInt': {
-                    '$substr': [
-                        '$datetime', 8, 2
-                    ]
-                }
-            },
-            'month': {
-                '$toInt': {
-                    '$substr': [
-                        '$datetime', 5, 2
-                    ]
-                }
-            }
-        }
-    }, {
-        '$match': {
-            'month': 7
-        }
-    }, {
+            'day': {'$toInt': {'$substr': ['$datetime', 8, 2]}},
+            'month': {'$toInt': {'$substr': ['$datetime', 5, 2]}}}
+    },
+    {
+        '$match': {'month': 7}
+    },
+    {
         '$group': {
             '_id': '$month',
-            'person_1_avg': {
-                '$avg': '$p_1_calories'
-            },
-            'person_2_avg': {
-                '$avg': '$p_2_calories'
-            }
+            'person_1_avg': {'$avg': '$p_1_calories'},
+            'person_2_avg': {'$avg': '$p_2_calories'}
         }
     }
 ]
