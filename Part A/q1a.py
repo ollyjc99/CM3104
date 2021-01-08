@@ -7,16 +7,47 @@ collection = db["data"]
 
 pipeline = [
     {
-        '$project': {'_id': 0, 'dateTime': 1, 'day': {'$toInt': {'$substr': ['$dateTime', 8, 2]}},
-                     'month': {'$toInt': {'$substr': ['$dateTime', 5, 2]}},
-                     'steps1': '$person_1_fitbit.steps',
-                     'steps2': '$person_2_fitbit.steps'
-                     }},
-    {
-        '$match': {'month': {'$eq': 6}}}, 
-    {
-        '$group': {'_id': '$day', 'steps1sum': {'$sum': '$steps1'},'steps2sum': {'$sum': '$steps2'}}},
-    {
-        '$sort': {'_id': 1}}]
+        '$project': {
+            '_id': 0,
+            'datetime': 1,
+            'p_1_steps': '$person_1_fitbit.steps',
+            'p_2_steps': '$person_2_fitbit.steps',
+            'day': {
+                '$toInt': {
+                    '$substr': [
+                        '$datetime', 8, 2
+                    ]
+                }
+            },
+            'month': {
+                '$toInt': {
+                    '$substr': [
+                        '$datetime', 5, 2
+                    ]
+                }
+            }
+        }
+    }, {
+        '$match': {
+            'month': {
+                '$eq': 7
+            }
+        }
+    }, {
+        '$group': {
+            '_id': '$day',
+            'person_1_steps': {
+                '$sum': '$p_1_steps'
+            },
+            'person_2_steps': {
+                '$sum': '$p_2_steps'
+            }
+        }
+    }, {
+        '$sort': {
+            '_id': 1
+        }
+    }
+]
 
-# pprint(list(collection.aggregate(pipeline)))
+pprint(list(collection.aggregate(pipeline)))
