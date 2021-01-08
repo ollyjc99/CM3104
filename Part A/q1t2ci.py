@@ -23,16 +23,15 @@ pipeline = [
                         '$cond': {
                             'if': {'$and': [{'$gte': ['$hour', 13]}, {'$lte': ['$hour', 19]}]},
                             'then': 'day',
-                            'else': 'night'
-                        }
-                    }
-                }
-            }
+                            'else': 'night'}}}}
         }
     },
-    {'$project': {'hour': 0}
+    {
+        '$project': {'hour': 0}
     },
-    {'$out': 'new_data'}
+    {
+        '$out': 'new_data'
+    }
 ]
 
 pprint(list(collection.aggregate(pipeline)))
