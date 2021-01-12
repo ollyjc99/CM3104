@@ -2,4 +2,10 @@
 venv/
 venv2/
 .DS_Store
-YelpSmall/
+Part A/Question 2/buisness_categories_small.csv
+Part A/Question 2/buisness_city.csv
+Part A/Question 2/buisness_small.csv
+Part A/Question 2/user_small.csv
+Part A/Question 2/user_friendship.csv
+Part A/Question 2/review_small.csv
+
